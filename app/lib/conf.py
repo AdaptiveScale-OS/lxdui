@@ -1,6 +1,7 @@
 from app import __metadata__ as meta
 from configparser import ConfigParser, ExtendedInterpolation
 from pathlib import Path
+from shutil import copy
 import os
 import io
 import logging
@@ -36,6 +37,9 @@ class MetaConf(object):
                 if '{{app_root}}' in v:
                     v = v.replace('{{app_root}}', self.getConfRoot())
                     self.config.set(section, k, v)
+                if '{{user_root}}' in v:
+                    v = v.replace('{{user_root}}', self.getUserRoot())
+                    self.config.set(section, k, v)
 
     def getConfRoot(self):
 
@@ -43,6 +47,15 @@ class MetaConf(object):
         app_dir = os.path.dirname(module_dir)
         return os.path.dirname(app_dir)
 
+    def getUserRoot(self):
+        if not os.path.exists(str(Path.home())+'/.lxdui/conf'):
+            os.makedirs(str(Path.home())+'/.lxdui/conf')
+            os.makedirs(str(Path.home()) + '/.lxdui/logs')
+            Path(str(Path.home()) + '/.lxdui/logs/lxdui.log').touch()
+            copy(self.getConfRoot() + '/conf/auth.conf', str(Path.home())+'/.lxdui/conf')
+            copy(self.getConfRoot() + '/conf/log.conf', str(Path.home()) + '/.lxdui/conf')
+
+        return str(Path.home())
 
     def getConfPaths(self):
         f = io.StringIO()

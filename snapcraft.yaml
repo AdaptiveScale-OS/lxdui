@@ -6,8 +6,7 @@ description: |
 grade: stable
 confinement: strict
 
-
-apps:
+apps:  
   lxdui:
     command: lxdui
     plugs:
@@ -21,6 +20,7 @@ apps:
 
 parts:
   lxdui:
-    source: .
+    source: /home/nuhi/lxdui/
     plugin: python
     python-version: python3
+
