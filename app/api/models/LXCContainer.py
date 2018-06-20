@@ -349,3 +349,36 @@ class LXCContainer(LXDModule):
             raise ValueError(e)
 
 
+    def execute(self):
+        try:
+            logging.info('Execute container {}'.format(self.data.get('name')))
+            container = self.client.containers.get(self.data.get('name'))
+            result = self.client.api.containers[self.data.get('name')].exec.post(json={
+                'command': ['/bin/sh'],
+                'environment': {},
+                'interactive': True,
+                'wait-for-websocket': True,
+            }).json()
+
+            return result
+            #return container.execute(['/bin/sh'], interactive=True)
+        except Exception as e:
+            logging.error('Failed to execute container {}'.format(self.data.get('name')))
+            logging.exception(e)
+            raise ValueError(e)
+
+    def websocket(self, id, fds):
+        try:
+            logging.info('Execute container {}'.format(self.data.get('name')))
+            container = self.client.containers.get(self.data.get('name'))
+            return self.client.api.operations[id].websocket.get(params={'secret': fds})
+
+            #return container.execute(['/bin/sh'], interactive=True)
+        except Exception as e:
+            logging.error('Failed to execute container {}'.format(self.data.get('name')))
+            logging.exception(e)
+            raise ValueError(e)
+
+
+
+
